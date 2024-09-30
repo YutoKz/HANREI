@@ -19,3 +19,5 @@ def prompts(template_name: str) -> PromptTemplate:
 
 回答：
         """)
+    else:
+        raise ValueError(f"Invalid template name: {template_name}")
