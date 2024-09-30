@@ -1,5 +1,5 @@
 import streamlit as st
-from ask_llm import page_ask_llm
+from ask_llm import page_ask_llm # type: ignore
 
 def init_page():
     st.set_page_config(
