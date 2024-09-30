@@ -17,6 +17,9 @@ build-backend = "hatchling.build"
 managed = true
 dev-dependencies = []
 
+[tool.rye.scripts]
+script_01 = { cmd = "streamlit run ./src/arxiv_summarizer/main.py", env = { OPENAI_API_KEY = "  自分の API KEY  " } }
+
 [tool.hatch.metadata]
 allow-direct-references = true
 
