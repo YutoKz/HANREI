@@ -13,6 +13,9 @@ def main():
     selection = st.sidebar.radio("Menu", ["Ask LLM"])
     if selection == "Ask LLM":
         page_ask_llm()
+    
+    st.sidebar.markdown("##### プロンプト例")
+    st.sidebar.markdown("- 保険金詐欺に関する判例にはどのようなものがありますか？")
 
 
 
