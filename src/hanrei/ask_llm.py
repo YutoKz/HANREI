@@ -2,7 +2,7 @@ import streamlit as st
 
 from langchain.docstore.document import Document
 from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
+#from langchain_core.output_parsers import StrOutputParser
 
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
@@ -27,6 +27,11 @@ def select_model():
     return ChatOpenAI(temperature=0, model=model_name)
 
 def load_qdrant(collection_name: str) -> QdrantVectorStore:
+    #try:
+    #    client = QdrantClient(path=QDRANT_PATH)
+    #except Exception as e:
+    #    st.error(f"Failed to load Qdrant: {e}")
+    #    return None
     client = QdrantClient(path=QDRANT_PATH)
 
     # すべてのコレクション名を取得
@@ -49,7 +54,7 @@ def load_qdrant(collection_name: str) -> QdrantVectorStore:
         embedding=OpenAIEmbeddings()
     )
 
-def format_docs(docs: list[Document]) -> str:   # 出力の型合っとる？
+def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
     return "\n\n".join(doc.page_content for doc in docs)
 
 
@@ -60,7 +65,11 @@ def page_ask_llm():
     st.title("Ask LLM")
 
     llm = select_model()
-    qdrant = load_qdrant(COLLECTION_NAME)
+    try:
+        qdrant = load_qdrant(COLLECTION_NAME)
+    except Exception as e:
+        st.error(f"Failed to load Qdrant: {e}")
+        qdrant = None
 
     col_query, col_askButton = st.columns((5, 1), vertical_alignment="bottom")
     with col_query:
@@ -68,7 +77,7 @@ def page_ask_llm():
     with col_askButton:
         ask_button = st.button("Ask", key="Ask") 
 
-    if ask_button: # クエリが入力されたら
+    if qdrant and ask_button: # クエリが入力されたら
         qa_chain = (    # type: ignore
             {
                 "context": qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}) | format_docs,  # type: ignore
