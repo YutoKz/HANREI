@@ -68,7 +68,7 @@ def page_ask_llm():
     try:
         qdrant = load_qdrant(COLLECTION_NAME)
     except Exception as e:
-        st.error(f"Failed to load Qdrant: {e}")
+        st.sidebar.error(f"Failed to load Qdrant: {e}")
         qdrant = None
 
     col_query, col_askButton = st.columns((5, 1), vertical_alignment="bottom")
