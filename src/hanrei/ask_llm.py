@@ -47,14 +47,13 @@ def load_qdrant(collection_name: str) -> QdrantVectorStore:
         )
         print('collection created')
 
-    #return Qdrant(
     return QdrantVectorStore(
         client=client,
         collection_name=collection_name, 
         embedding=OpenAIEmbeddings()
     )
 
-def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
+def save_format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
     st.session_state.retrieved_docs = docs.copy()
     return "\n\n".join(doc.page_content for doc in docs)
 
@@ -83,7 +82,7 @@ def page_ask_llm():
     if qdrant and ask_button: # クエリが入力されたら
         qa_chain = (    # type: ignore
             {
-                "context": qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}) | format_docs,  # type: ignore
+                "context": qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}) | save_format_docs,  # type: ignore
                 "query": RunnablePassthrough(),
             }
             | prompts("qa_chain")
