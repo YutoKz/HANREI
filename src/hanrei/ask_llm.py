@@ -53,8 +53,7 @@ def load_qdrant(collection_name: str) -> QdrantVectorStore:
         embedding=OpenAIEmbeddings()
     )
 
-def save_format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
-    st.session_state.retrieved_docs = docs.copy()
+def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
     return "\n\n".join(doc.page_content for doc in docs)
 
 
@@ -64,9 +63,8 @@ def save_format_docs(docs: list[Document]) -> str:   # 出力の型合ってる�
 def page_ask_llm():
     st.title("Ask LLM")
 
-    st.session_state.retrieved_docs = []
-
     llm = select_model()
+
     try:
         qdrant = load_qdrant(COLLECTION_NAME)
     except Exception as e:
@@ -75,20 +73,26 @@ def page_ask_llm():
 
     col_query, col_askButton = st.columns((5, 1), vertical_alignment="bottom")
     with col_query:
-        query = st.text_input("What's your problem?", key="Query")
+        query = st.text_input("What's your problem?", key="Query", placeholder="SNSでの誹謗中傷で裁判を起こされるとどんな責任が発生しますか？")
     with col_askButton:
         ask_button = st.button("Ask", key="Ask") 
 
     if qdrant and ask_button: # クエリが入力されたら
+        retrieved_docs = qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}).invoke(query)
+        
         qa_chain = (    # type: ignore
-            {
-                "context": qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}) | save_format_docs,  # type: ignore
-                "query": RunnablePassthrough(),
-            }
-            | prompts("qa_chain")
+            prompts("qa_chain")
             | llm 
             | StrOutputParser()        # 
         )
-        output: str = qa_chain.invoke(query)    # type: ignore
+        output: str = qa_chain.invoke(  # type: ignore
+            {
+                "context": format_docs(retrieved_docs),  # type: ignore
+                "query": query,
+            }
+        )    # type: ignore
         st.write(output) # type: ignore
-        st.markdown(f"Retrieved {st.session_state.retrieved_docs}")  # type: ignore      うまく表示できるか確認
+        st.markdown(f"### Retrieved docs")
+        for i, doc in enumerate(retrieved_docs):
+            st.markdown(f"##### {i+1}")
+            st.markdown(doc.page_content)
