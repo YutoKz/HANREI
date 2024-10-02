@@ -2,7 +2,7 @@ import streamlit as st
 
 from langchain.docstore.document import Document
 from langchain_core.runnables import RunnablePassthrough
-#from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import StrOutputParser
 
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
@@ -55,6 +55,7 @@ def load_qdrant(collection_name: str) -> QdrantVectorStore:
     )
 
 def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
+    st.session_state.retrieved_docs = docs.copy()
     return "\n\n".join(doc.page_content for doc in docs)
 
 
@@ -63,6 +64,8 @@ def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
 
 def page_ask_llm():
     st.title("Ask LLM")
+
+    st.session_state.retrieved_docs = []
 
     llm = select_model()
     try:
@@ -85,8 +88,8 @@ def page_ask_llm():
             }
             | prompts("qa_chain")
             | llm 
-            #| StrOutputParser()        # 一旦コメントアウト
+            | StrOutputParser()        # 
         )
-
         output: str = qa_chain.invoke(query)    # type: ignore
         st.write(output) # type: ignore
+        st.markdown(f"Retrieved {st.session_state.retrieved_docs}")  # type: ignore      うまく表示できるか確認
