@@ -81,8 +81,9 @@ def upload_json_to_qdrant(json_folder_path: str):
             chunk_overlap=0,
         )
 
-        for json_file in os.listdir(json_folder_path):
-            print(json_file)
+        num_datas = len(os.listdir(json_folder_path))
+        for i, json_file in enumerate(os.listdir(json_folder_path)):
+            print(f"{i}/{num_datas}    {json_file}")
             if not json_file.endswith(".json") or json_file.endswith("list.json"):
                 continue   
             
@@ -105,7 +106,9 @@ def upload_json_to_qdrant(json_folder_path: str):
                 contents            = json_data.get("contents")
 
                 # contents を text_splitter により分割
-                splitted_contents = text_splitter.split_text(contents)
+                # データセットには判決文のないものがある模様
+                if contents:
+                    splitted_contents = text_splitter.split_text(contents)
 
                 # qdrantにアップロード
                 metadata_dict = {
