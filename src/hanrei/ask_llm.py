@@ -1,7 +1,7 @@
 import streamlit as st
 
 from langchain.docstore.document import Document
-from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnablePassthrough # type: ignore
 from langchain_core.output_parsers import StrOutputParser
 
 from langchain_openai import ChatOpenAI
@@ -61,7 +61,7 @@ def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
 # -----------------------------------------------------------------------------------------------------
 
 def page_ask_llm():
-    st.title("Ask LLM")
+    st.title("判例検索 AI")
 
     llm = select_model()
 

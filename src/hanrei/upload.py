@@ -46,9 +46,9 @@
 import os
 import json
 
-import streamlit as st
+import streamlit as st # type: ignore
 
-from langchain_qdrant import QdrantVectorStore 
+from langchain_qdrant import QdrantVectorStore # type: ignore
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from ask_llm import load_qdrant # type: ignore
@@ -65,8 +65,8 @@ def upload_json_to_qdrant(json_folder_path: str):
             json_folder_path (str): JSONファイルが 直下に 格納されているフォルダ
     """
     try:
-        qdrant = load_qdrant(COLLECTION_NAME)
-    except Exception as e:
+        qdrant = load_qdrant(COLLECTION_NAME)   # type: ignore
+    except Exception as e:    # type: ignore
         # st.sidebar.error(f"Failed to load Qdrant: {e}")      もしstreamlitを使う場合はコメントアウトを外す
         qdrant = None
     
@@ -126,8 +126,8 @@ def upload_json_to_qdrant(json_folder_path: str):
                     "full_pdf_link": full_pdf_link
                 }
 
-                if splitted_contents:
-                    qdrant.add_texts(splitted_contents, metadatas=[metadata_dict for _ in splitted_contents])
+                if splitted_contents:   # type: ignore
+                    qdrant.add_texts(splitted_contents, metadatas=[metadata_dict for _ in splitted_contents])   # type: ignore
 
 
 
