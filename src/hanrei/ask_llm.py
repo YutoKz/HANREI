@@ -124,18 +124,18 @@ def page_ask_llm():
                     | llm 
                     | StrOutputParser()        # 
                 )
-                output: str = qa_chain.invoke(  # type: ignore
+                answer: str = qa_chain.invoke(  # type: ignore
                     {
                         "context": format_docs(retrieved_docs),  # type: ignore
                         "query": query,
                     }
                 )    # type: ignore
             st.session_state.retrieved_docs = retrieved_docs
-            st.session_state.output = output
+            st.session_state.answer = answer
 
-        if "output" in st.session_state:
+        if "answer" in st.session_state:
             st.markdown("### 回答")
-            st.write(st.session_state.output) # type: ignore
+            st.write(st.session_state.answer) # type: ignore
 
         if "retrieved_docs" in st.session_state:
             # 類似文章を表示
@@ -171,4 +171,5 @@ def page_ask_llm():
     with tab_law:
         st.markdown("ここに法律検索のコードを書く")
         st.markdown("データベースはSQLを検討中。。")
+        # st.session_state.
         
