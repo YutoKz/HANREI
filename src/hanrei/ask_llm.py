@@ -17,11 +17,12 @@ QDRANT_PATH = "./local_qdrant"
 COLLECTION_NAME = "database"
 
 def select_model():
-    model = st.sidebar.radio("Choose a model:", ("GPT-4o mini", "(GPT-3.5-turbo)"))
-    if model == "(GPT-3.5-turbo)":
-        model_name = "gpt-3.5-turbo"
-    else:
-        model_name = "gpt-4o-mini"
+        #model = st.sidebar.radio("Choose a model:", ("GPT-4o mini", "(GPT-3.5-turbo)"))
+        #if model == "(GPT-3.5-turbo)":
+        #    model_name = "gpt-3.5-turbo"
+        #else:
+        #    model_name = "gpt-4o-mini"
+    model_name = "gpt-4o-mini"
     st.session_state.model_name = model_name
 
     return ChatOpenAI(temperature=0, model=model_name)
@@ -82,9 +83,9 @@ def page_ask_llm():
     try:
         qdrant = load_qdrant(COLLECTION_NAME)
     except Exception as e:
-        st.sidebar.error("ヒント：プロンプト入力時はクリックしたのち、処理が終わるまで待ってからAskボタンを押してください。")
-        st.sidebar.error(f"---------------------------")
-        st.sidebar.error(f"Failed to load Qdrant: {e}")
+        st.error("ヒント：プロンプト入力時はクリックしたのち、処理が終わるまで待ってからAskボタンを押してください。")
+        st.error(f"---------------------------")
+        st.error(f"Failed to load Qdrant: {e}")
         qdrant = None
 
     col_query, col_askButton = st.columns((5, 1), vertical_alignment="bottom")
