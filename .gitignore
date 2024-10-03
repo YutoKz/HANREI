@@ -9,5 +9,6 @@ wheels/
 # venv
 .venv
 pyproject.toml
-*.lock
-*.json
+requirements.lock
+requirements-dev.lock
+data/japanese-law-analysis/*

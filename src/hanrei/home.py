@@ -16,11 +16,9 @@ def page_home():
     with tab_readme_overview:
         st.markdown(splitted_readme_text[0], unsafe_allow_html=True)
 
-        a = st.text_area("a")
     
     with tab_readme_dev:
         st.markdown("## 開発" + splitted_readme_text[1], unsafe_allow_html=True)
 
-        st.write(a)
 
     
