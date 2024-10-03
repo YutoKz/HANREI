@@ -107,9 +107,10 @@ def page_ask_llm():
     tab_ask, tab_law = st.tabs(["Ask ChatGPT", "Search Law"])
 
     with tab_ask:
-        col_query, col_askButton = st.columns((5, 1), vertical_alignment="bottom")
+        st.markdown("### 質問")
+        col_query, col_askButton = st.columns((10, 1), vertical_alignment="bottom")
         with col_query:
-            query = st.text_area("ChatGPT に質問：", key="Query", placeholder="あなたの置かれた状況について説明してください。")
+            query = st.text_area("ChatGPT へ質問：", key="Query", placeholder="あなたの置かれた状況について説明してください。")
         with col_askButton:
             ask_button = st.button("Ask", key="Ask") 
 
@@ -138,7 +139,8 @@ def page_ask_llm():
 
         if "retrieved_docs" in st.session_state:
             # 類似文章を表示
-            st.markdown(f"### 関連する判例")
+            st.markdown("---")
+            st.markdown("### 関連する判例")
                 #st.markdown("[関連度順]")
             col_sort, col_reverse = st.columns((1, 1))
             with col_sort:
