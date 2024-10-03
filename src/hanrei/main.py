@@ -1,5 +1,10 @@
 import streamlit as st
+from streamlit_navigation_bar import st_navbar # type: ignore
+
+from home import page_home  # type: ignore
 from ask_llm import page_ask_llm # type: ignore
+from law import page_law  # type: ignore
+
 
 def init_page():
     st.set_page_config(
@@ -8,16 +13,54 @@ def init_page():
     )
 
 def main():
-    init_page()
+    #init_page()
 
-    selection = st.sidebar.radio("Menu", ["Ask LLM"])
-    if selection == "Ask LLM":
-        page_ask_llm()
-    
-    st.sidebar.markdown("##### プロンプト例")
-    st.sidebar.markdown("- 保険金詐欺に関する判例にはどのようなものがありますか？")
-    st.sidebar.markdown("- Youtubeに違法にアップロードされた動画を視聴してしまいました。私は罪に問われますか？心配です。")
+    # navigation bar
+    st.set_page_config(initial_sidebar_state="collapsed")
 
+    pages = ["Home", "Ask ChatGPT", "Law", "GitHub"]
+    urls = {"GitHub": "https://github.com/YutoKz/HANREI/tree/develop"}
+    logo_path = "./data/awl_white.svg"
+    styles = {
+        "nav": {
+            "background-color": "black",
+            "justify-content": "center",
+        },
+        "img": {
+            "padding-right": "14px",
+        },
+        "span": {
+            "color": "white",
+            "padding": "14px",
+            "family-font": "Arial",
+        },
+        "active": {
+            "background-color": "gray",
+            "color": "var(--text-color)",
+            "font-weight": "normal",
+            "padding": "14px",
+        }
+    }
+    options = {
+        "show_sidebar": False,
+    }
+
+    page = st_navbar(
+        pages,
+        logo_path=logo_path,
+        urls=urls,
+        styles=styles,
+        options=options,    # type: ignore
+    )
+
+    functions = {   # type: ignore
+        "Home": page_home,
+        "Ask ChatGPT": page_ask_llm,
+        "Law": page_law,
+    }
+    go_to = functions.get(page)     # type: ignore
+    if go_to:
+        go_to()
 
 
 if __name__ == '__main__':
