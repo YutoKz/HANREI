@@ -56,6 +56,20 @@ def load_qdrant(collection_name: str) -> QdrantVectorStore:
 def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
     return "\n\n".join(doc.page_content for doc in docs)
 
+def nengou(nengou_alphabet: str) -> str:
+    if nengou_alphabet == "Reiwa":
+        return "令和"
+    elif nengou_alphabet == "Heisei":
+        return "平成"
+    elif nengou_alphabet == "Shouwa":
+        return "昭和"
+    elif nengou_alphabet == "Taishou":
+        return "大正"
+    elif nengou_alphabet == "Meiji":
+        return "明治"
+    else:
+        return ""
+
 
 
 # -----------------------------------------------------------------------------------------------------
@@ -68,31 +82,41 @@ def page_ask_llm():
     try:
         qdrant = load_qdrant(COLLECTION_NAME)
     except Exception as e:
+        st.sidebar.error("ヒント：プロンプト入力時はクリックしたのち、処理が終わるまで待ってからAskボタンを押してください。")
+        st.sidebar.error(f"---------------------------")
         st.sidebar.error(f"Failed to load Qdrant: {e}")
         qdrant = None
 
     col_query, col_askButton = st.columns((5, 1), vertical_alignment="bottom")
     with col_query:
-        query = st.text_input("What's your problem?", key="Query", placeholder="SNSでの誹謗中傷で裁判を起こされるとどんな責任が発生しますか？")
+        query = st.text_area("ChatGPT に質問：", key="Query", placeholder="あなたの置かれた状況について説明してください。")
     with col_askButton:
         ask_button = st.button("Ask", key="Ask") 
 
     if qdrant and ask_button: # クエリが入力されたら
-        retrieved_docs = qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}).invoke(query)
-        
-        qa_chain = (    # type: ignore
-            prompts("qa_chain")
-            | llm 
-            | StrOutputParser()        # 
-        )
-        output: str = qa_chain.invoke(  # type: ignore
-            {
-                "context": format_docs(retrieved_docs),  # type: ignore
-                "query": query,
-            }
-        )    # type: ignore
+        with st.spinner("ChatGPT is thinking..."):
+            retrieved_docs: list[Document] = qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}).invoke(query)
+            
+            qa_chain = (    # type: ignore
+                prompts("qa_chain")
+                | llm 
+                | StrOutputParser()        # 
+            )
+            output: str = qa_chain.invoke(  # type: ignore
+                {
+                    "context": format_docs(retrieved_docs),  # type: ignore
+                    "query": query,
+                }
+            )    # type: ignore
+        st.markdown("### 回答")
         st.write(output) # type: ignore
-        st.markdown(f"### Retrieved docs")
+
+        # 類似文章を表示
+        st.markdown(f"### 関連する判例")
+        st.markdown("関連度順")
         for i, doc in enumerate(retrieved_docs):
-            st.markdown(f"##### {i+1}")
-            st.markdown(doc.page_content)
+            with st.expander(f"{nengou(doc.metadata.get("date_era"))}{doc.metadata.get("date_year")}年{doc.metadata.get("date_month")}月{doc.metadata.get("date_day")}日    {doc.metadata.get("court_name")}    {doc.metadata.get("case_name")}"):
+                st.markdown(f"事件番号：{doc.metadata.get('case_number')}")
+                st.markdown("..." + doc.page_content + "...")
+                st.markdown(f"裁判所HP 裁判例結果詳細：{doc.metadata.get('detail_page_link')}")
+                st.markdown(f"PDF Link：{doc.metadata.get('full_pdf_link')}")
