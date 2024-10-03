@@ -3,7 +3,6 @@ from streamlit_navigation_bar import st_navbar # type: ignore
 
 from home import page_home  # type: ignore
 from ask_llm import page_ask_llm # type: ignore
-from law import page_law  # type: ignore
 
 
 def init_page():
@@ -18,7 +17,7 @@ def main():
     # navigation bar
     st.set_page_config(initial_sidebar_state="collapsed")
 
-    pages = ["Home", "Ask ChatGPT", "Law", "GitHub"]
+    pages = ["Home", "Ask ChatGPT", "GitHub"]
     urls = {"GitHub": "https://github.com/YutoKz/HANREI/tree/develop"}
     logo_path = "./data/awl_white.svg"
     styles = {
@@ -56,7 +55,6 @@ def main():
     functions = {   # type: ignore
         "Home": page_home,
         "Ask ChatGPT": page_ask_llm,
-        "Law": page_law,
     }
     go_to = functions.get(page)     # type: ignore
     if go_to:
