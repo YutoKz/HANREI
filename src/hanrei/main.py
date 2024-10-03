@@ -16,6 +16,7 @@ def main():
     
     st.sidebar.markdown("##### プロンプト例")
     st.sidebar.markdown("- 保険金詐欺に関する判例にはどのようなものがありますか？")
+    st.sidebar.markdown("- Youtubeに違法にアップロードされた動画を視聴してしまいました。私は罪に問われますか？心配です。")
 
 
 

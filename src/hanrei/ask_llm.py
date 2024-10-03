@@ -113,9 +113,9 @@ def page_ask_llm():
 
         # 類似文章を表示
         st.markdown(f"### 関連する判例")
-        st.markdown("関連度順")
+        st.markdown("[関連度順]")
         for i, doc in enumerate(retrieved_docs):
-            with st.expander(f"{nengou(doc.metadata.get("date_era"))}{doc.metadata.get("date_year")}年{doc.metadata.get("date_month")}月{doc.metadata.get("date_day")}日    {doc.metadata.get("court_name")}    {doc.metadata.get("case_name")}"):
+            with st.expander(f"{nengou(doc.metadata.get("date_era"))}{doc.metadata.get("date_year")}年{doc.metadata.get("date_month")}月{doc.metadata.get("date_day")}日    {doc.metadata.get("court_name")}    **{doc.metadata.get("case_name")}**"):
                 st.markdown(f"事件番号：{doc.metadata.get('case_number')}")
                 st.markdown("..." + doc.page_content + "...")
                 st.markdown(f"裁判所HP 裁判例結果詳細：{doc.metadata.get('detail_page_link')}")
