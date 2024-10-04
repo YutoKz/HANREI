@@ -129,6 +129,10 @@ def upload_json_to_qdrant(json_folder_path: str):
                 if splitted_contents:   # type: ignore
                     qdrant.add_texts(splitted_contents, metadatas=[metadata_dict for _ in splitted_contents])   # type: ignore
 
+# ---------------------------------------------------------------
+
+def page_database():
+    pass
 
 
 

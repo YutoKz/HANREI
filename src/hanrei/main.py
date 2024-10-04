@@ -26,7 +26,7 @@ def main():
         page_home()
     elif page == "Ask ChatGPT":
         page_ask_llm()
-    elif page == "DataBase":
+    #elif page == "DataBase":
         
 
 
