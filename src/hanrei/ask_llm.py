@@ -178,6 +178,7 @@ def page_ask_llm():
     with tab_law:
         # st.session_state.answer で言及されている法令を抽出、条文をAPIで取得して表示する
         st.markdown("### 関連する法令")
+        st.markdown("e-GOV APIを使用して法令の条文を取得")
         if "answer" in st.session_state:
             ## 法令抽出
             extract_law_chain = (   # type: ignore
