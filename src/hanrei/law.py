@@ -1,6 +1,7 @@
 import json
 import requests
 from xml.etree import ElementTree
+import re
 
 def create_name_num_json():
     """
@@ -41,7 +42,11 @@ def get_law_from_num(num: str):
     r = requests.get(url)
     root = ElementTree.fromstring(r.content.decode(encoding="utf-8"))
     contents = [e.text.strip() for e in root.iter() if e.text]
-    return [t for t in contents if t]
+    contents = [t for t in contents if t]
+    contents = [s for s in contents if s.endswith("。")]
+    gcp = "".join(contents)
+    gcp = gcp.translate(str.maketrans({"「": "", "」": ""}))
+    return re.sub("（[^（|^）]*）", "", gcp)
 
 
 
