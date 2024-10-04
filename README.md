@@ -1,4 +1,5 @@
 ## 判例AI
+[Streamlit Cloud で公開済み](https://hanrei.streamlit.app/)
 
 ### 概要
 - 置かれた状況、目的、やりたいことなどを入力すると<br>関係する法律や気をつけるべき法律、判例について教えてくれるAI
