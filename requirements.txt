@@ -57,7 +57,7 @@ pydeck==0.9.1
 pygments==2.18.0
 python-dateutil==2.9.0.post0
 pytz==2024.2
-pywin32==306
+#pywin32==306
 pyyaml==6.0.2
 qdrant-client==1.11.3
 referencing==0.35.1
