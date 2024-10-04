@@ -12,4 +12,4 @@ local_qdrant/*
 pyproject.toml
 requirements.lock
 requirements-dev.lock
-data/japanese-law-analysis/*
+data/japanese-law-analysis/precedent/*
