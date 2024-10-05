@@ -17,6 +17,8 @@ from law import get_num_from_name # type: ignore
 from law import get_num_from_name_keywords # type: ignore
 from law import get_law_from_num # type: ignore
 
+import os
+
 
 QDRANT_PATH = "./local_qdrant"
 COLLECTION_NAME = "database"
@@ -32,7 +34,7 @@ def select_model():
 
     return ChatOpenAI(temperature=0, model=model_name)
 
-def load_qdrant(collection_name: str) -> QdrantVectorStore:
+def load_local_qdrant(collection_name: str) -> QdrantVectorStore:
     #try:
     #    client = QdrantClient(path=QDRANT_PATH)
     #except Exception as e:
@@ -57,6 +59,18 @@ def load_qdrant(collection_name: str) -> QdrantVectorStore:
         client=client,
         collection_name=collection_name, 
         embedding=OpenAIEmbeddings()
+    )
+
+def load_cloud_qdrant(collection_name: str) -> QdrantVectorStore:
+    """
+        Qdrant CloudのQdrantVectorStore を出力
+    """
+
+    return QdrantVectorStore.from_existing_collection(
+        embedding=OpenAIEmbeddings(),   # qdrant の 公式turorial ではembeddingsとなっているが間違い 
+        collection_name=collection_name,
+        url="https://417591d1-d134-46ce-9255-1e11bb2bc5dc.europe-west3-0.gcp.cloud.qdrant.io:6333",
+        api_key=os.getenv("QDRANT_API_KEY"),   # 環境変数で与えればOK、と理解
     )
 
 def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
@@ -104,7 +118,7 @@ def page_ask_llm():
     llm = select_model()
 
     try:
-        qdrant = load_qdrant(COLLECTION_NAME)
+        qdrant = load_local_qdrant(COLLECTION_NAME)
     except Exception as e:
         st.error("ヒント：プロンプト入力時はクリックしたのち、処理が終わるまで待ってからAskボタンを押してください。")
         st.error(f"Failed to load Qdrant: {e}")
@@ -234,3 +248,5 @@ def page_ask_llm():
 
 
         
+if __name__ == '__main__':
+    load_cloud_qdrant(collection_name=COLLECTION_NAME)
