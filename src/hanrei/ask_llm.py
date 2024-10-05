@@ -133,7 +133,8 @@ def page_ask_llm():
     llm = select_model()
 
     try:
-        qdrant = load_local_qdrant(COLLECTION_NAME)
+        #qdrant = load_local_qdrant(COLLECTION_NAME)   # ローカルのQdrantを使う場合
+        qdrant = load_cloud_qdrant(COLLECTION_NAME)
     except Exception as e:
         st.error("ヒント：プロンプト入力時はクリックしたのち、処理が終わるまで待ってからAskボタンを押してください。")
         st.error(f"Failed to load Qdrant: {e}")
