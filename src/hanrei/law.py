@@ -53,5 +53,5 @@ def get_law_from_num(num: str):
 
 if __name__ == '__main__':
     #create_name_num_json()
-    output = get_num_from_name(["著作権法"])
+    output = get_num_from_name(著作権法)
     print(output)
