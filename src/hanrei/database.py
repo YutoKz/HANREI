@@ -51,23 +51,35 @@ import streamlit as st # type: ignore
 from langchain_qdrant import QdrantVectorStore # type: ignore
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from ask_llm import load_qdrant # type: ignore
+from ask_llm import load_local_qdrant, load_cloud_qdrant # type: ignore
 
 
 QDRANT_PATH = "./local_qdrant"
 COLLECTION_NAME = "database"
 
-def upload_json_to_qdrant(json_folder_path: str):
+def create_snapshot_local_qdrant():
     """
-        JSON形式の判例データをQdrantにアップロードする
+        Qdrantのスナップショットを作成する
+    """
+    qdrant: QdrantVectorStore = load_local_qdrant(COLLECTION_NAME)   # type: ignore
+    qdrant.client.create_snapshot(collection_name=COLLECTION_NAME, snapshot_path="./data/snapshot.tar")   # type: ignore
+
+
+def upload_json_to_qdrant(json_folder_path: str, is_local: bool = True):
+    """
+        JSON形式の判例データをローカルのQdrantにアップロードする
 
         Args:
             json_folder_path (str): JSONファイルが 直下に 格納されているフォルダ
     """
     try:
-        qdrant = load_qdrant(COLLECTION_NAME)   # type: ignore
+        if is_local:
+            qdrant = load_local_qdrant(COLLECTION_NAME)   # type: ignore
+        else: # qdrant cloud
+            qdrant = load_cloud_qdrant(COLLECTION_NAME)
     except Exception as e:    # type: ignore
         # st.sidebar.error(f"Failed to load Qdrant: {e}")      もしstreamlitを使う場合はコメントアウトを外す
+        print(f"Failed to load Qdrant: {e}")
         qdrant = None
     
     if qdrant:
@@ -138,4 +150,5 @@ def page_database():
 
 
 if __name__ == '__main__':
-    upload_json_to_qdrant(json_folder_path="./data/japanese-law-analysis/precedent/2020")
+    upload_json_to_qdrant(json_folder_path="./data/japanese-law-analysis/precedent/2020", is_local=False)
+    #create_snapshot_local_qdrant()
