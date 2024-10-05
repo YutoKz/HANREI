@@ -6,6 +6,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
+from langchain_core.prompts import PromptTemplate
 
 from langchain_qdrant import QdrantVectorStore 
 from qdrant_client import QdrantClient
@@ -124,6 +125,10 @@ def str_to_list(string: str) -> list[list[str]]:
     result = [line.split(",") for line in lines]
     return [[item.strip() for item in line] for line in result]
 
+def check_prompt(prompt: PromptTemplate) -> PromptTemplate:
+    print(prompt)
+    return prompt
+
 
 # -----------------------------------------------------------------------------------------------------
 
@@ -158,6 +163,7 @@ def page_ask_llm():
             with st.spinner("ChatGPT is thinking..."):
                 qa_chain = (    # type: ignore
                     prompts("qa_chain")
+                    | check_prompt
                     | llm 
                     | StrOutputParser()        # 
                 )
