@@ -65,12 +65,27 @@ def load_cloud_qdrant(collection_name: str) -> QdrantVectorStore:
     """
         Qdrant CloudのQdrantVectorStore を出力
     """
+    client = QdrantClient(url="https://417591d1-d134-46ce-9255-1e11bb2bc5dc.europe-west3-0.gcp.cloud.qdrant.io:6333", api_key=os.getenv("QDRANT_API_KEY"), timeout=300)
 
+    # すべてのコレクション名を取得
+    collections = client.get_collections().collections
+    collection_names = [collection.name for collection in collections]
+
+    # コレクションが存在しなければ作成
+    if collection_name not in collection_names:
+        # コレクションが存在しない場合、新しく作成します
+        client.create_collection(
+            collection_name=collection_name,
+            vectors_config=VectorParams(size=1536, distance=Distance.COSINE),
+        )
+        print('collection created')
+    
     return QdrantVectorStore.from_existing_collection(
         embedding=OpenAIEmbeddings(),   # qdrant の 公式turorial ではembeddingsとなっているが間違い 
         collection_name=collection_name,
         url="https://417591d1-d134-46ce-9255-1e11bb2bc5dc.europe-west3-0.gcp.cloud.qdrant.io:6333",
         api_key=os.getenv("QDRANT_API_KEY"),   # 環境変数で与えればOK、と理解
+        timeout=300,
     )
 
 def format_docs(docs: list[Document]) -> str:   # 出力の型合ってる？
