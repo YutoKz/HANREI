@@ -148,7 +148,7 @@ def page_ask_llm():
         qdrant = None
 
 
-    tab_ask, tab_law = st.tabs(["Ask ChatGPT", "Search Law"])
+    tab_ask, tab_law = st.tabs(["Ask ChatGPT", "Related Law"])
 
     with tab_ask:
         st.markdown("### 質問")
@@ -260,6 +260,9 @@ def page_ask_llm():
                 else:
                     # 法令名をキーワードとして、関連しそうな法令番号を取得
                     num_from_name_keywords: dict[str, str] = get_num_from_name_keywords([law[0]])   # type: ignore
+                    if len(num_from_name_keywords) == 0:
+                        st.markdown("該当する法令が見つかりませんでした。")
+                        continue
 
                     # それぞれの条文を取得
                     for i, (name, num) in enumerate(num_from_name_keywords.items()):    # type: ignore
