@@ -2,6 +2,7 @@ import json
 import requests
 from xml.etree import ElementTree
 import re
+import streamlit as st
 
 def create_name_num_json():
     """
@@ -48,10 +49,28 @@ def get_law_from_num(num: str):
     gcp = gcp.translate(str.maketrans({"「": "", "」": ""}))
     return re.sub("（[^（|^）]*）", "", gcp)
 
+# ------------------------------------------------------------------------
+
+def page_search_law():
+    st.title("法令検索")
+    st.markdown("e-Gov APIを利用して法令を検索します")
+    law_name = st.text_input("法令名")
+    if law_name:
+        law_dict: dict[str, str] = get_num_from_name_keywords([law_name])
+        if len(law_dict.items()) > 0:
+            for i, (name, num) in enumerate(law_dict.items()):    # type: ignore
+                with st.spinner("Retrieving law from API..."):    
+                    if i >= 10:
+                        break
+                    with st.expander(f"{name}"):
+                        law_contents = get_law_from_num(num)    # type: ignore
+                        st.markdown(law_contents)   # type: ignore
+        else:
+            st.error("該当する法令が見つかりませんでした")
 
 
 
 if __name__ == '__main__':
     #create_name_num_json()
-    output = get_num_from_name(著作権法)
+    output = get_num_from_name("著作権法")
     print(output)

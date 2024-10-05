@@ -3,6 +3,7 @@ from streamlit_navigation_bar import st_navbar # type: ignore
 
 from home import page_home  # type: ignore
 from ask_llm import page_ask_llm # type: ignore
+from law import page_search_law # type: ignore
 
 
 def init_page():
@@ -19,14 +20,15 @@ def main():
 
     page = st.sidebar.radio(
         "Navigation",
-        ["Home", "Ask ChatGPT", "DataBase"]
+        ["Home", "Ask ChatGPT", "Search Law"]
     )
 
     if page == "Home":
         page_home()
     elif page == "Ask ChatGPT":
         page_ask_llm()
-    #elif page == "DataBase":
+    elif page == "Search Law":
+        page_search_law()
         
 
 
