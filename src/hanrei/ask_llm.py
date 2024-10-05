@@ -126,7 +126,9 @@ def str_to_list(string: str) -> list[list[str]]:
     return [[item.strip() for item in line] for line in result]
 
 def check_prompt(prompt: PromptTemplate) -> PromptTemplate:
-    print(prompt)
+    print(str(prompt)[len("text='"):-1])
+    with st.expander("実際のプロンプト"):
+        st.markdown(str(prompt))
     return prompt
 
 
