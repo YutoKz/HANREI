@@ -147,6 +147,8 @@ def page_ask_llm():
         st.error(f"Failed to load Qdrant: {e}")
         qdrant = None
 
+    if "query" not in st.session_state:
+        st.session_state.query = ""
 
     tab_ask, tab_law = st.tabs(["Ask ChatGPT", "Related Law"])
 
@@ -154,13 +156,13 @@ def page_ask_llm():
         st.markdown("### 質問")
         col_query, col_askButton = st.columns((10, 1), vertical_alignment="bottom")
         with col_query:
-            query = st.text_area("ChatGPT へ質問：", key="Query", placeholder="あなたの置かれた状況について説明してください。")
+            st.session_state.query = st.text_area("ChatGPT へ質問：", key="Query", placeholder="あなたの置かれた状況について説明してください。", value=st.session_state.query)
         with col_askButton:
             ask_button = st.button("Ask", key="Ask") 
 
         if qdrant and ask_button: # クエリが入力されたら
             with st.spinner("Retrieving docs from VectorDB..."):
-                retrieved_docs: list[Document] = qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}).invoke(query)
+                retrieved_docs: list[Document] = qdrant.as_retriever(search_type="similarity", search_kwargs={"k":10}).invoke(st.session_state.query)
                 
             with st.spinner("ChatGPT is thinking..."):
                 qa_chain = (    # type: ignore
@@ -172,7 +174,7 @@ def page_ask_llm():
                 answer: str = qa_chain.invoke(  # type: ignore
                     {
                         "context": format_docs(retrieved_docs),  # type: ignore
-                        "query": query,
+                        "query": st.session_state.query,
                     }
                 )    # type: ignore
             st.session_state.retrieved_docs = retrieved_docs

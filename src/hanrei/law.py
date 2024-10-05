@@ -54,9 +54,13 @@ def get_law_from_num(num: str):
 def page_search_law():
     st.title("法令検索")
     st.markdown("e-Gov APIを利用して法令を検索します")
-    law_name = st.text_input("法令名")
-    if law_name:
-        law_dict: dict[str, str] = get_num_from_name_keywords([law_name])
+
+    if "law_name" not in st.session_state:
+        st.session_state.law_name = ""
+
+    st.session_state.law_name = st.text_input("法令名")
+    if st.session_state.law_name:
+        law_dict: dict[str, str] = get_num_from_name_keywords([st.session_state.law_name])
         if len(law_dict.items()) > 0:
             for i, (name, num) in enumerate(law_dict.items()):    # type: ignore
                 with st.spinner("Retrieving law from API..."):    
