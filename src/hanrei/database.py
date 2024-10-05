@@ -65,7 +65,7 @@ def create_snapshot_local_qdrant():
     qdrant.client.create_snapshot(collection_name=COLLECTION_NAME, snapshot_path="./data/snapshot.tar")   # type: ignore
 
 
-def upload_json_to_qdrant(json_folder_path: str, is_local: bool = True):
+def upload_json_to_qdrant(json_folder_path: str, is_local: bool = True, start_index: int = 0):
     """
         JSON形式の判例データをローカルのQdrantにアップロードする
 
@@ -95,6 +95,10 @@ def upload_json_to_qdrant(json_folder_path: str, is_local: bool = True):
 
         num_datas = len(os.listdir(json_folder_path))
         for i, json_file in enumerate(os.listdir(json_folder_path)):
+            # 途中から始める場合
+            if i < start_index:
+                continue
+
             print(f"{i}/{num_datas}    {json_file}")
             if not json_file.endswith(".json") or json_file.endswith("list.json"):
                 continue   
@@ -150,5 +154,5 @@ def page_database():
 
 
 if __name__ == '__main__':
-    upload_json_to_qdrant(json_folder_path="./data/japanese-law-analysis/precedent/2020", is_local=False)
+    upload_json_to_qdrant(json_folder_path="./data/japanese-law-analysis/precedent/2020", is_local=False, start_index=474)
     #create_snapshot_local_qdrant()
