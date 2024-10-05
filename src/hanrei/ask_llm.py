@@ -226,7 +226,7 @@ def page_ask_llm():
                 | str_to_list
             )
             extracted_laws: list[list[str]] = extract_law_chain.invoke({"context": st.session_state.answer})  # type: ignore
-            st.markdown(extracted_laws)      # これで、言及された法律の名称、条、項、号のリストが取得できた
+            #st.markdown(extracted_laws)      # これで、言及された法律の名称、条、項、号のリストが取得できた
 
             ## 法令の検索
             ## 言及された法令の名称が辞書内の法令に、　完全一致するならそれを表示　/　部分一致なら名称のみでキーワード検索、結果を表示
@@ -244,7 +244,7 @@ def page_ask_llm():
                 if law[3] != "":
                     law_str += "号" # type: ignore
 
-                st.markdown(f"##### {law_str}")
+                st.markdown(f"- ##### {law_str}")
 
                 num_from_name = get_num_from_name(law[0])  # type: ignore
                 
